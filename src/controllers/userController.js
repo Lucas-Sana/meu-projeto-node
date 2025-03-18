@@ -1,16 +1,17 @@
-// src/controllers/userController.js
 const db = require('../db/db');
 
-const createUser = (req, res) => {
+const registerUser = (req, res) => {
   const { name, email } = req.body;
 
   const query = 'INSERT INTO users (name, email) VALUES (?, ?)';
-  db.query(query, [name, email], (err, results) => {
+  db.query(query, [name, email], (err, result) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
+      console.error('Erro ao inserir no banco de dados:', err);
+      res.status(500).json({ message: 'Erro ao cadastrar usuário' });
+    } else {
+      res.status(200).json({ message: 'Usuário cadastrado com sucesso', id: result.insertId });
     }
-    res.status(201).json({ id: results.insertId, name, email });
   });
 };
 
-module.exports = { createUser };
+module.exports = { registerUser };
