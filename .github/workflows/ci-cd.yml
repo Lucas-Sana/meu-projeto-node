@@ -34,3 +34,18 @@ jobs:
       # Passo 5: Build do projeto com Webpack
       - name: Build project
         run: npm run build
+
+      # Passo 6: Deploy na AWS (opcional, se necessário)
+      - name: Deploy to AWS
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          echo "Instalando Terraform..."
+          curl -LO https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
+          unzip terraform_1.5.7_linux_amd64.zip -d /usr/local/bin
+          rm terraform_1.5.7_linux_amd64.zip
+
+          echo "Inicializando e aplicando o Terraform..."
+          terraform init
+          terraform apply -auto-approve
