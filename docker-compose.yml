@@ -1,14 +1,65 @@
 version: '3'
 services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: meu_banco
+      MYSQL_USER: meu_usuario
+      MYSQL_PASSWORD: minha_senha
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - app-network
+
   app:
     build:
       context: .
-      dockerfile: Dockerfile.node
+      dockerfile: Dockerfile
+    container_name: node_app
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
-      - DB_HOST=${DB_HOST}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+      - DB_HOST=db
+      - DB_USER=meu_usuario
+      - DB_PASSWORD=minha_senha
+      - DB_NAME=meu_banco
+    depends_on:
+      db:
+        condition: service_healthy
     restart: always
+    networks:
+      - app-network
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node_test
+    environment:
+      - DB_HOST=db
+      - DB_USER=meu_usuario
+      - DB_PASSWORD=minha_senha
+      - DB_NAME=meu_banco
+    depends_on:
+      db:
+        condition: service_healthy
+    command: npm test
+    networks:
+      - app-network
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge

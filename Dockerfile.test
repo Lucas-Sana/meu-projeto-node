@@ -1,0 +1,16 @@
+FROM node:16
+
+# Define o diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia os arquivos de dependências
+COPY package.json package-lock.json ./
+
+# Instala as dependências (incluindo as de desenvolvimento)
+RUN npm install
+
+# Copia o restante do código para o container
+COPY . .
+
+# Comando para rodar os testes
+CMD ["npm", "test"]

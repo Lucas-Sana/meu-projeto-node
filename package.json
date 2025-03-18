@@ -4,12 +4,14 @@
     "scripts": {
         "start": "node src/index.js",
         "build": "webpack --mode production",
-        "test": "jest"
+        "test": "jest",
+        "dev": "nodemon src/index.js" 
     },
     "dependencies": {
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
-        "mysql2": "^3.13.0"
+        "mysql2": "^3.13.0",
+        "nodemon": "^3.1.0" 
     },
     "devDependencies": {
         "jest": "^29.7.0",
@@ -17,7 +19,7 @@
         "webpack": "^5.98.0",
         "webpack-cli": "^5.1.4"
     },
-    "main": "webpack.config.js",
+    "main": "src/index.js", 
     "directories": {
         "test": "test"
     },
